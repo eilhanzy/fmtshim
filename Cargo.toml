@@ -1,0 +1,25 @@
+[package]
+name = "fmtshim"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+# KRİTİK: Android ve Linux sistemlerinin bu dosyayı dinamik kütüphane (.so) 
+# olarak görebilmesi için cdylib şart.
+name = "wrapper"
+crate-type = ["cdylib"]
+
+[dependencies]
+# Sistem çağrıları ve bellek yönetimi için libc şart.
+libc = "0.2"
+
+[profile.release]
+# Kütüphane boyutunu küçültmek ve performansı artırmak için:
+opt-level = "z"     # Boyut öncelikli optimizasyon
+lto = true          # Link Time Optimization
+codegen-units = 1
+panic = "abort"     # Hata durumunda yığın izini (stack trace) temizle
+strip = true        # Sembolleri temizleyerek dosya boyutunu düşür
+
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
